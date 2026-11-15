@@ -5,12 +5,24 @@
   padding: 0;
 }
 
+/* —— brand colors + fonts —— */
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --red: #ff003b;
+  --gold: #e3a535;
+  --surface: #f7f7f7;
+  --border: rgba(0, 0, 0, 0.14);
+  --muted-text: rgba(0, 0, 0, 0.62);
+}
+
 /* —— body + fonts —— */
 body {
-  font-family: "Montserrat", Arial, Helvetica, sans-serif;
-  color: #333;
+  font-family: "Helvetica Now Display", "Helvetica Neue", Arial, sans-serif;
+  color: var(--black);
   display: flex;
   justify-content: center;
+  background: var(--white);
 }
 
 .page-wrapper {
@@ -24,7 +36,15 @@ body {
   padding-top: 50px;
 }
 
+.brand-logo {
+  display: block;
+  width: min(220px, 70%);
+  height: auto;
+  margin: 0 auto 24px;
+}
+
 .site-title {
+  font-family: "Halesworth eText Bold", "Halesworth eText", Georgia, serif;
   font-size: 22px;
   font-weight: 500;
   margin-bottom: 10px;
@@ -36,28 +56,49 @@ body {
 }
 
 .chat-window {
-  height: 360px;
-  border: 1px solid #000;
+  height: 500px;
+  border: 1px solid var(--border);
   padding: 20px;
-  font-size: 18px;
-  line-height: 1.5;
   overflow-y: auto;
-  background: #fafafa;
-  white-space: pre-line;
+  background: var(--surface);
+  scroll-behavior: smooth;
+  font-family: "Helvetica Now Display", "Helvetica Neue", Arial, sans-serif;
 }
 
 /* messages */
-.msg {
+.message-row {
+  display: flex;
   margin-bottom: 14px;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
+.message-row.bot {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 16px;
   line-height: 1.5;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
-.msg.user {
-  color: #000;
+.message-row.user .message-bubble {
+  color: var(--white);
+  background: var(--black);
+  border-bottom-right-radius: 4px;
 }
 
-.msg.ai {
-  color: #666666;
+.message-row.bot .message-bubble {
+  color: var(--black);
+  background: rgba(227, 165, 53, 0.18);
+  border-bottom-left-radius: 4px;
 }
 
 /* input row */
@@ -70,19 +111,22 @@ body {
 .chat-form input {
   flex: 1;
   padding: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   font-size: 18px;
+  font-family: "Helvetica Now Display", "Helvetica Neue", Arial, sans-serif;
+  background: var(--white);
 }
 
 .chat-form input:focus {
-  outline: 2px solid #000;
+  outline: 2px solid var(--red);
   outline-offset: 2px;
 }
 
 .chat-form button {
+  font-family: "Halesworth eText Medium", "Halesworth eText", Georgia, serif;
   font-size: 18px;
-  background: #000;
-  color: #fff;
+  background: var(--red);
+  color: var(--white);
   border: none;
   padding: 12px;
   width: 48px;
@@ -99,11 +143,11 @@ body {
 }
 
 .chat-form button:hover {
-  background: #666666;
+  background: #cc0030;
 }
 
 .chat-form button:focus {
-  outline: 2px solid #000;
+  outline: 2px solid var(--red);
   outline-offset: 2px;
 }
 
@@ -125,19 +169,21 @@ body {
   margin: 60px 0 40px;
   text-align: center;
   font-size: 14px;
-  color: #666;
+  color: var(--muted-text);
+  font-family: "Halesworth eText Medium", "Halesworth eText", Georgia, serif;
 }
 
 .site-footer nav {
   margin-top: 12px;
+  font-family: "Halesworth eText Medium", "Halesworth eText", Georgia, serif;
 }
 
 .site-footer a {
   margin: 0 8px;
-  color: #000;
+  color: var(--black);
   text-decoration: none;
 }
 
 .site-footer a:hover {
-  color: #666666;
+  color: var(--red);
 }

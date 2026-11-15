@@ -7,27 +7,57 @@ const workerUrl =  `https://loralchatbot.chubbjessie43.workers.dev/`
 
 // from sample
 let messages = [
-  { role: 'system', content: `You are a friendly Budget Travel Planner, specializing in cost-conscious travel advice. You help users find cheap flights, budget-friendly accommodations, affordable itineraries, and low-cost activities in their chosen destination.
+  { role: 'system', content: `You are a friendly, expert Cosmetologist, specializing in L’Oréal’s extensive range of products—makeup, skincare, haircare, and fragrances. You recommend useful products from L’Oréal and provide personalized routines. 
 
-  If a user's query is unrelated to budget travel, respond by stating that you do not know.`}
+  If a user's query is unrelated L’Oréal products, routines, recommendations, or beauty-related topics, respond by stating that you do not know.`}
 ];
 
-// Set initial message
-chatWindow.textContent = "👋 Hello! How can I help you today?";
+// Add a message bubble to the visible conversation.
+function addMessage(role, content) {
+  const message = document.createElement("div");
+  message.className = `message-row ${role === "user" ? "user" : "bot"}`;
+
+  const bubble = document.createElement("div");
+  bubble.className = "message-bubble";
+  bubble.textContent = content;
+
+  message.appendChild(bubble);
+  chatWindow.appendChild(message);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
+  return message;
+}
+
+// Convert the bot's Markdown into safe HTML for the message bubble.
+function renderBotMessage(bubble, content) {
+  const escapedContent = document.createElement("div");
+  escapedContent.textContent = content;
+
+  bubble.innerHTML = escapedContent.innerHTML
+    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
+    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\n/g, "<br>");
+}
+
+// Show the first bot message when the page loads.
+addMessage("bot", "👋 Hello! How can I help you today?");
 
 /* Handle form submit */
-chatForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+chatForm.addEventListener("submit", async(event) => {
+  event.preventDefault(); // Prevent the form from submitting the traditional way
 
-  // When using Cloudflare, you'll need to POST a `messages` array in the body,
-  // and handle the response using: data.choices[0].message.content
-  
+  const userMessage = userInput.value.trim();
+  if (!userMessage) {
+    return;
+  }
 
-  // Show message
-  chatWindow.innerHTML = "Connect to the OpenAI API for a response!";
-});
+  // Add the user's message to the conversation history
+  messages.push({ role: 'user', content: userMessage });
+  addMessage("user", userMessage);
+  const thinkingMessage = addMessage("bot", "Thinking...");
 
-async function fetchRequest() {
   try {
     // Send a POST request to your Cloudflare Worker
     const response = await fetch(workerUrl, {
@@ -54,10 +84,17 @@ async function fetchRequest() {
     // Add the Worker's response to the conversation history
     messages.push({ role: 'assistant', content: replyText });
 
-    // Display the response on the page
-    responseContainer.textContent = replyText;
+    // Replace the temporary loading bubble with the response.
+    renderBotMessage(
+      thinkingMessage.querySelector(".message-bubble"),
+      replyText,
+    );
   } catch (error) {
     console.error('Error:', error); // Log the error
-    responseContainer.textContent = 'Sorry, something went wrong. Please try again later.'; // Show error message to the user
+    thinkingMessage.querySelector(".message-bubble").textContent =
+      'Sorry, something went wrong. Please try again later.';
   }
-};
+
+  // Clear the input field
+  userInput.value = '';
+});
